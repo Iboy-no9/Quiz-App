@@ -1,0 +1,6 @@
+{
+  "name": "QuizMaster - Assessment & Analytics Platform",
+  "description": "Comprehensive quiz creator with bulk question import, timed student test runner, and deep diagnostic analytics including miss rates, distractor breakdowns, and time-taken tracking.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
