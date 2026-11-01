@@ -96,16 +96,67 @@ export async function syncWithServer(): Promise<void> {
     const res = await fetch('/api/sync');
     if (res.ok) {
       const serverData = await res.json();
-      if (serverData.quizzes && Array.isArray(serverData.quizzes)) {
-        const cleanQuizzes = filterAndDeduplicateQuizzes(serverData.quizzes);
-        localStorage.setItem(STORAGE_KEYS.QUIZZES, JSON.stringify(cleanQuizzes));
+
+      // 1. Safe Non-Destructive Question Merge
+      // Read current local questions from storage
+      let localQuestions: Question[] = [];
+      try {
+        const raw = localStorage.getItem(STORAGE_KEYS.QUESTIONS);
+        if (raw) localQuestions = JSON.parse(raw);
+      } catch (e) {}
+
+      const questionMap = new Map<string, Question>();
+      // Baseline initial repository
+      INITIAL_QUESTIONS.forEach(q => questionMap.set(q.id, q));
+      // Server questions
+      if (Array.isArray(serverData.questions)) {
+        serverData.questions.forEach((q: Question) => questionMap.set(q.id, q));
       }
-      if (serverData.questions && serverData.questions.length > 0) {
-        localStorage.setItem(STORAGE_KEYS.QUESTIONS, JSON.stringify(serverData.questions));
+      // CRITICAL: Preserve all questions added locally in browser so they NEVER get deleted by git diff/reloads
+      localQuestions.forEach(q => questionMap.set(q.id, q));
+      const mergedQuestions = Array.from(questionMap.values());
+      localStorage.setItem(STORAGE_KEYS.QUESTIONS, JSON.stringify(mergedQuestions));
+
+      // 2. Safe Quizzes Merge
+      let localQuizzes: Quiz[] = [];
+      try {
+        const raw = localStorage.getItem(STORAGE_KEYS.QUIZZES);
+        if (raw) localQuizzes = JSON.parse(raw);
+      } catch (e) {}
+
+      const quizMap = new Map<string, Quiz>();
+      INITIAL_QUIZZES.forEach(q => quizMap.set(q.id, q));
+      if (Array.isArray(serverData.quizzes)) {
+        serverData.quizzes.forEach((q: Quiz) => quizMap.set(q.id, q));
       }
-      if (serverData.submissions) {
-        localStorage.setItem(STORAGE_KEYS.SUBMISSIONS, JSON.stringify(serverData.submissions));
+      localQuizzes.forEach(q => {
+        const existing = quizMap.get(q.id);
+        if (existing) {
+          // Merge questionIds so new questions attached to a quiz aren't lost
+          const mergedIds = Array.from(new Set([...(existing.questionIds || []), ...(q.questionIds || [])]));
+          quizMap.set(q.id, { ...existing, ...q, questionIds: mergedIds });
+        } else {
+          quizMap.set(q.id, q);
+        }
+      });
+      const cleanQuizzes = filterAndDeduplicateQuizzes(Array.from(quizMap.values()));
+      localStorage.setItem(STORAGE_KEYS.QUIZZES, JSON.stringify(cleanQuizzes));
+
+      // 3. If local browser has questions or quizzes missing from server, push to server immediately
+      const serverQuestionsList = Array.isArray(serverData.questions) ? serverData.questions : [];
+      const hasUnsavedLocalQuestions = mergedQuestions.some(mq => !serverQuestionsList.some((sq: any) => sq.id === mq.id));
+
+      if (hasUnsavedLocalQuestions) {
+        await fetch('/api/persist-to-code', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            questions: mergedQuestions,
+            quizzes: cleanQuizzes,
+          }),
+        }).catch(() => {});
       }
+
       triggerUpdate();
     }
   } catch (e) {
@@ -119,7 +170,6 @@ export async function syncWithServer(): Promise<void> {
 if (typeof window !== 'undefined') {
   syncWithServer();
 }
-
 
 // Questions
 export function getQuestions(): Question[] {
@@ -150,14 +200,21 @@ export function saveQuestions(questions: Question[]): void {
   localStorage.setItem(STORAGE_KEYS.QUESTIONS, JSON.stringify(questions));
   triggerUpdate();
 
+  // Dual-sync to in-memory server and persistent code files
   fetch('/api/sync', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ questions }),
+  }).catch(() => {});
+
+  fetch('/api/persist-to-code', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ questions }),
   }).catch(() => {});
 }
 
-export function addQuestions(newQuestions: Question[]): void {
+export function addQuestions(newQuestions: Question[], targetQuizId?: string): void {
   const current = getQuestions();
   // Prevent duplicate IDs
   const existingIds = new Set(current.map(q => q.id));
@@ -169,6 +226,19 @@ export function addQuestions(newQuestions: Question[]): void {
   });
   const updated = [...current, ...filtered];
   saveQuestions(updated);
+
+  // If a target assessment was specified, also attach the new questions to that assessment
+  if (targetQuizId) {
+    const quizzes = getQuizzes();
+    const quiz = quizzes.find(q => q.id === targetQuizId);
+    if (quiz) {
+      const newIds = filtered.map(q => q.id);
+      saveQuiz({
+        ...quiz,
+        questionIds: Array.from(new Set([...quiz.questionIds, ...newIds])),
+      });
+    }
+  }
 }
 
 export function updateQuestion(question: Question): void {
@@ -182,7 +252,22 @@ export function updateQuestion(question: Question): void {
 
 export function deleteQuestion(questionId: string): void {
   const current = getQuestions();
-  saveQuestions(current.filter(q => q.id !== questionId));
+  const updated = current.filter(q => q.id !== questionId);
+  saveQuestions(updated);
+
+  // Also detach from all quizzes
+  const quizzes = getQuizzes();
+  let quizChanged = false;
+  const updatedQuizzes = quizzes.map(q => {
+    if (q.questionIds.includes(questionId)) {
+      quizChanged = true;
+      return { ...q, questionIds: q.questionIds.filter(id => id !== questionId) };
+    }
+    return q;
+  });
+  if (quizChanged) {
+    saveQuizzes(updatedQuizzes);
+  }
 
   fetch(`/api/questions/${questionId}`, { method: 'DELETE' }).catch(() => {});
 }
@@ -615,3 +700,68 @@ function downloadBlob(content: string, filename: string, type: string) {
   document.body.removeChild(link);
   URL.revokeObjectURL(url);
 }
+
+export async function persistAllToCodebase(): Promise<{ success: boolean; message: string; counts?: { questions: number; quizzes: number } }> {
+  const currentQuestions = getQuestions();
+  const currentQuizzes = getQuizzes();
+  const currentSubs = getSubmissions();
+
+  try {
+    const res = await fetch('/api/persist-to-code', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        questions: currentQuestions,
+        quizzes: currentQuizzes,
+        submissions: currentSubs,
+      }),
+    });
+    if (res.ok) {
+      const data = await res.json();
+      return {
+        success: true,
+        message: 'Successfully saved to Git codebase (src/data/initialData.ts) & assessment-db.json!',
+        counts: data.counts,
+      };
+    }
+  } catch (e) {
+    // offline
+  }
+  return {
+    success: false,
+    message: 'Saved to browser storage only (local server is offline or running on static hosting).',
+  };
+}
+
+export function downloadAssessmentBackup(): void {
+  const data = {
+    questions: getQuestions(),
+    quizzes: getQuizzes(),
+    submissions: getSubmissions(),
+    exportedAt: new Date().toISOString(),
+    version: 'v5',
+  };
+  const jsonContent = JSON.stringify(data, null, 2);
+  downloadBlob(jsonContent, `assessment-backup-${new Date().toISOString().slice(0, 10)}.json`, 'application/json');
+}
+
+export function importAssessmentBackup(jsonString: string): { success: boolean; count: number; error?: string } {
+  try {
+    const parsed = JSON.parse(jsonString);
+    if (!parsed || (!Array.isArray(parsed.questions) && !Array.isArray(parsed.quizzes))) {
+      return { success: false, count: 0, error: 'Invalid backup file structure' };
+    }
+
+    if (Array.isArray(parsed.questions) && parsed.questions.length > 0) {
+      addQuestions(parsed.questions);
+    }
+    if (Array.isArray(parsed.quizzes) && parsed.quizzes.length > 0) {
+      parsed.quizzes.forEach((q: Quiz) => saveQuiz(q));
+    }
+    persistAllToCodebase().catch(() => {});
+    return { success: true, count: parsed.questions?.length || 0 };
+  } catch (err: any) {
+    return { success: false, count: 0, error: err?.message || 'Failed to parse JSON file' };
+  }
+}
+

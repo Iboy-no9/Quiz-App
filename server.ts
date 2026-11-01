@@ -94,10 +94,33 @@ function loadDatabase(): ServerData {
   return initialData;
 }
 
+const INITIAL_DATA_FILE = path.resolve(__dirname, 'src', 'data', 'initialData.ts');
+
+function syncToCodebaseFile(data: ServerData): void {
+  try {
+    const codeContent = `/**
+ * Pre-seeded Assessment Data & Repository
+ * Automatically synchronized with assessment-db.json for Git and Vercel persistence
+ */
+import type { Question, Quiz, StudentSubmission } from '../types/quiz.ts';
+
+export const INITIAL_QUESTIONS: Question[] = ${JSON.stringify(data.questions, null, 2)};
+
+export const INITIAL_QUIZZES: Quiz[] = ${JSON.stringify(data.quizzes, null, 2)};
+
+export const INITIAL_SUBMISSIONS: StudentSubmission[] = ${JSON.stringify(data.submissions, null, 2)};
+`;
+    fs.writeFileSync(INITIAL_DATA_FILE, codeContent, 'utf-8');
+  } catch (err) {
+    console.error('Error writing to initialData.ts:', err);
+  }
+}
+
 function saveDatabase(data: ServerData): void {
   try {
     data.lastUpdated = new Date().toISOString();
     fs.writeFileSync(DB_FILE, JSON.stringify(data, null, 2), 'utf-8');
+    syncToCodebaseFile(data);
   } catch (err) {
     console.error('Error writing assessment-db.json:', err);
   }
@@ -208,6 +231,14 @@ async function startServer() {
     } else {
       db.questions.push(question);
     }
+
+    if (req.body.targetQuizId) {
+      const targetQuiz = db.quizzes.find((q: any) => q.id === req.body.targetQuizId);
+      if (targetQuiz && Array.isArray(targetQuiz.questionIds) && !targetQuiz.questionIds.includes(question.id)) {
+        targetQuiz.questionIds.push(question.id);
+      }
+    }
+
     saveDatabase(db);
     res.json({ success: true, question });
   });
@@ -233,6 +264,38 @@ async function startServer() {
     db.questions = db.questions.filter((q: any) => q.id !== id);
     saveDatabase(db);
     res.json({ success: true, id });
+  });
+
+  // Direct persistence to codebase files for Git and Vercel
+  app.post('/api/persist-to-code', (req, res) => {
+    const { questions, quizzes, submissions } = req.body;
+    const db = loadDatabase();
+
+    if (Array.isArray(questions) && questions.length > 0) {
+      const qMap = new Map<string, any>(db.questions.map((q: any) => [q.id, q]));
+      questions.forEach((q: any) => qMap.set(q.id, q));
+      db.questions = Array.from(qMap.values());
+    }
+
+    if (Array.isArray(quizzes) && quizzes.length > 0) {
+      db.quizzes = sanitizeServerQuizzes(quizzes);
+    }
+
+    if (Array.isArray(submissions) && submissions.length > 0) {
+      const sMap = new Map<string, any>(db.submissions.map((s: any) => [s.id, s]));
+      submissions.forEach((s: any) => sMap.set(s.id, s));
+      db.submissions = Array.from(sMap.values());
+    }
+
+    saveDatabase(db);
+    res.json({
+      success: true,
+      message: 'Persisted to assessment-db.json and src/data/initialData.ts',
+      counts: {
+        questions: db.questions.length,
+        quizzes: db.quizzes.length,
+      },
+    });
   });
 
   // 6. Submissions

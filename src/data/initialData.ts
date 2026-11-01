@@ -1,3 +1,7 @@
+/**
+ * Pre-seeded Assessment Data & Repository
+ * Automatically synchronized with assessment-db.json for Git and Vercel persistence
+ */
 import type { Question, Quiz, StudentSubmission } from '../types/quiz.ts';
 
 export const INITIAL_QUESTIONS: Question[] = [
