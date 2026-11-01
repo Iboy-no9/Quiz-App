@@ -61,6 +61,12 @@ export function filterAndDeduplicateQuizzes(quizzes: Quiz[]): Quiz[] {
 
     if (code) seenCodes.add(code);
     if (title) seenTitles.add(title);
+
+    // Enforce 45 minutes for UX35_GEO_GIANT
+    if (title === 'UX35_GEO_GIANT') {
+      q.timeLimitMinutes = 45;
+    }
+
     result.push(q);
   }
 

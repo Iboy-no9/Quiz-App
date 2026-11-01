@@ -30,9 +30,9 @@ export const QuizResultView: React.FC<QuizResultViewProps> = ({
   const questionMap = new Map(questions.map(q => [q.id, q]));
 
   return (
-    <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
+    <div className="max-w-4xl mx-auto px-3 sm:px-6 lg:px-8 py-5 sm:py-8 space-y-5 sm:space-y-6">
       {/* Result Hero Banner */}
-      <div className={`p-6 sm:p-8 rounded-2xl border ${
+      <div className={`p-5 sm:p-8 rounded-2xl border ${
         submission.passed
           ? 'bg-emerald-50/70 border-emerald-200'
           : 'bg-rose-50/70 border-rose-200'
@@ -46,22 +46,22 @@ export const QuizResultView: React.FC<QuizResultViewProps> = ({
               <span aria-hidden="true">·</span>
               <span className="text-slate-600">{quiz.title}</span>
             </div>
-            <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900">
+            <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 leading-tight">
               {submission.passed ? 'Congratulations, ' : 'Completed, '}
               {submission.studentName}!
             </h1>
             <div className="flex items-center gap-2 text-xs text-slate-600 mt-1 font-mono">
               <span>Reg No: <strong className="text-slate-900 font-bold">{submission.studentRegNo || submission.studentEmailOrId}</strong></span>
             </div>
-            <p className="text-xs text-slate-600 mt-1">
+            <p className="text-xs text-slate-600 mt-1.5 leading-relaxed">
               {submission.passed
                 ? `You reached the passing cutoff of ${quiz.passingScorePercent}%. Your submission has been recorded in the class diagnostic log.`
                 : `You scored ${submission.scorePercent}%, which is below the passing cutoff of ${quiz.passingScorePercent}%. Review your missed questions below.`}
             </p>
           </div>
 
-          <div className="text-center sm:text-right shrink-0">
-            <div className={`text-4xl font-extrabold font-mono tabular-nums ${
+          <div className="text-left sm:text-right shrink-0 pt-2 sm:pt-0 border-t sm:border-t-0 border-slate-200/50">
+            <div className={`text-4xl sm:text-5xl font-extrabold font-mono tabular-nums ${
               submission.passed ? 'text-emerald-700' : 'text-rose-700'
             }`}>
               {submission.scorePercent}%
@@ -73,22 +73,22 @@ export const QuizResultView: React.FC<QuizResultViewProps> = ({
         </div>
 
         {/* Quick Stats Grid */}
-        <div className="grid grid-cols-3 gap-3 mt-6 pt-6 border-t border-slate-200/60 text-center">
-          <div>
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mt-6 pt-6 border-t border-slate-200/60 text-center">
+          <div className="p-2 sm:p-0">
             <p className="text-xs text-slate-500">Correct Answers</p>
-            <p className="text-base font-bold text-emerald-700 tabular-nums">
+            <p className="text-lg font-bold text-emerald-700 tabular-nums">
               {submission.correctCount}
             </p>
           </div>
-          <div>
+          <div className="p-2 sm:p-0 border-t sm:border-t-0 sm:border-x border-slate-200/60">
             <p className="text-xs text-slate-500">Missed / Skipped</p>
-            <p className="text-base font-bold text-rose-700 tabular-nums">
+            <p className="text-lg font-bold text-rose-700 tabular-nums">
               {submission.incorrectCount}
             </p>
           </div>
-          <div>
+          <div className="p-2 sm:p-0 border-t sm:border-t-0 border-slate-200/60">
             <p className="text-xs text-slate-500">Total Time Taken</p>
-            <p className="text-base font-bold text-slate-900 tabular-nums font-mono">
+            <p className="text-lg font-bold text-slate-900 tabular-nums font-mono">
               {formatTimeSeconds(submission.totalTimeSpentSeconds)}
             </p>
           </div>
@@ -96,22 +96,22 @@ export const QuizResultView: React.FC<QuizResultViewProps> = ({
       </div>
 
       {/* Action Buttons */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <h2 className="text-base font-bold text-slate-900">
           Question Review & Solution Key
         </h2>
 
-        <div className="flex items-center gap-2">
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 w-full sm:w-auto">
           <button
             onClick={onRetake}
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-slate-700 bg-white border border-slate-300 hover:bg-slate-50 rounded-lg transition-colors"
+            className="inline-flex items-center justify-center gap-1.5 px-3.5 py-2 text-xs font-semibold text-slate-700 bg-white border border-slate-300 hover:bg-slate-50 rounded-lg transition-colors min-h-[40px] sm:min-h-0"
           >
             <RotateCcw className="w-3.5 h-3.5" />
             <span>Retake Quiz</span>
           </button>
           <button
             onClick={onExit}
-            className="inline-flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-semibold text-white bg-slate-900 hover:bg-slate-800 rounded-lg transition-colors"
+            className="inline-flex items-center justify-center gap-1.5 px-4 py-2 text-xs font-semibold text-white bg-slate-900 hover:bg-slate-800 rounded-lg transition-colors min-h-[40px] sm:min-h-0"
           >
             <span>Exit to Portal</span>
             <ArrowRight className="w-3.5 h-3.5" />

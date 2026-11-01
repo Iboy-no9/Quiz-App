@@ -246,7 +246,7 @@ export const BulkImporter: React.FC<BulkImporterProps> = ({ quizzes, onImportCom
   };
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
+    <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-5 sm:py-8 space-y-5 sm:space-y-6">
       {/* Title & Description */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-4 border-b border-slate-200">
         <div>
@@ -257,10 +257,10 @@ export const BulkImporter: React.FC<BulkImporterProps> = ({ quizzes, onImportCom
         </div>
 
         {/* Format Selector segmented tabs */}
-        <div className="flex items-center p-1 bg-slate-100 rounded-lg text-xs self-start md:self-auto">
+        <div className="flex items-center p-1 bg-slate-100 rounded-lg text-xs overflow-x-auto w-full md:w-auto touch-pan-x">
           <button
             onClick={() => setActiveTab('text')}
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md font-semibold transition-colors ${
+            className={`flex-1 md:flex-initial inline-flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-md font-semibold transition-colors whitespace-nowrap ${
               activeTab === 'text' ? 'bg-white text-slate-900 shadow-xs' : 'text-slate-600 hover:text-slate-900'
             }`}
           >
@@ -269,7 +269,7 @@ export const BulkImporter: React.FC<BulkImporterProps> = ({ quizzes, onImportCom
           </button>
           <button
             onClick={() => setActiveTab('csv')}
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md font-semibold transition-colors ${
+            className={`flex-1 md:flex-initial inline-flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-md font-semibold transition-colors whitespace-nowrap ${
               activeTab === 'csv' ? 'bg-white text-slate-900 shadow-xs' : 'text-slate-600 hover:text-slate-900'
             }`}
           >
@@ -278,7 +278,7 @@ export const BulkImporter: React.FC<BulkImporterProps> = ({ quizzes, onImportCom
           </button>
           <button
             onClick={() => setActiveTab('packs')}
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md font-semibold transition-colors ${
+            className={`flex-1 md:flex-initial inline-flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-md font-semibold transition-colors whitespace-nowrap ${
               activeTab === 'packs' ? 'bg-white text-slate-900 shadow-xs' : 'text-slate-600 hover:text-slate-900'
             }`}
           >
@@ -402,15 +402,15 @@ export const BulkImporter: React.FC<BulkImporterProps> = ({ quizzes, onImportCom
         )}
 
         {/* BOTTOM ACTION BAR: Instant Status, Destination & 1-Click Import Button */}
-        <div className="pt-4 border-t border-slate-100 flex flex-col md:flex-row md:items-center justify-between gap-4 bg-slate-50/70 -mx-6 -mb-6 p-6 rounded-b-xl">
+        <div className="pt-4 border-t border-slate-100 flex flex-col lg:flex-row lg:items-center justify-between gap-4 bg-slate-50/70 -mx-4 sm:-mx-6 -mb-4 sm:-mb-6 p-4 sm:p-6 rounded-b-xl">
           {/* Left: Live status counter */}
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2.5 flex-wrap">
             <div className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg border text-xs font-semibold ${
               parsedData.validCount > 0
                 ? 'bg-emerald-50 text-emerald-800 border-emerald-200'
                 : 'bg-amber-50 text-amber-800 border-amber-200'
             }`}>
-              <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+              <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
               <span>{parsedData.validCount} Questions Ready to Import</span>
             </div>
 
@@ -422,14 +422,14 @@ export const BulkImporter: React.FC<BulkImporterProps> = ({ quizzes, onImportCom
           </div>
 
           {/* Right: Destination selector + Primary Import Button */}
-          <div className="flex flex-col sm:flex-row items-center gap-3">
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5 w-full lg:w-auto">
             <div className="flex items-center gap-2 w-full sm:w-auto">
-              <label htmlFor="destination-select" className="text-xs text-slate-500 whitespace-nowrap">Destination:</label>
+              <label htmlFor="destination-select" className="text-xs text-slate-500 whitespace-nowrap shrink-0">Destination:</label>
               <select
                 id="destination-select"
                 value={targetDestination}
                 onChange={e => setTargetDestination(e.target.value as any)}
-                className="text-xs font-medium px-2.5 py-2 bg-white border border-slate-200 rounded-lg text-slate-800 focus:outline-none focus:ring-1 focus:ring-slate-900"
+                className="w-full sm:w-auto text-xs font-medium px-2.5 py-2 bg-white border border-slate-200 rounded-lg text-slate-800 focus:outline-none focus:ring-1 focus:ring-slate-900"
               >
                 <option value="bank">Save to Master Question Bank</option>
                 {quizzes.length > 0 && (
@@ -443,7 +443,7 @@ export const BulkImporter: React.FC<BulkImporterProps> = ({ quizzes, onImportCom
               <select
                 value={selectedQuizId}
                 onChange={e => setSelectedQuizId(e.target.value)}
-                className="text-xs font-medium px-2.5 py-2 bg-white border border-slate-200 rounded-lg text-slate-800"
+                className="w-full sm:w-auto text-xs font-medium px-2.5 py-2 bg-white border border-slate-200 rounded-lg text-slate-800"
               >
                 {quizzes.map(q => (
                   <option key={q.id} value={q.id}>
@@ -459,16 +459,16 @@ export const BulkImporter: React.FC<BulkImporterProps> = ({ quizzes, onImportCom
                 placeholder="New Quiz Title..."
                 value={newQuizTitle}
                 onChange={e => setNewQuizTitle(e.target.value)}
-                className="text-xs px-2.5 py-2 bg-white border border-slate-200 rounded-lg text-slate-800 w-40"
+                className="w-full sm:w-40 text-xs px-2.5 py-2 bg-white border border-slate-200 rounded-lg text-slate-800"
               />
             )}
 
             <button
               onClick={handleCommitImport}
               disabled={parsedData.validCount === 0}
-              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-2 text-xs font-bold text-white bg-slate-900 hover:bg-slate-800 rounded-lg transition-colors shadow-xs disabled:opacity-40 disabled:cursor-not-allowed whitespace-nowrap"
+              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-2.5 sm:py-2 text-xs font-bold text-white bg-slate-900 hover:bg-slate-800 rounded-lg transition-colors shadow-xs disabled:opacity-40 disabled:cursor-not-allowed whitespace-nowrap min-h-[40px]"
             >
-              <PlusCircle className="w-4 h-4" />
+              <PlusCircle className="w-4 h-4 shrink-0" />
               <span>Import {parsedData.validCount} Questions Now</span>
             </button>
           </div>

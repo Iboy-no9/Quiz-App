@@ -193,15 +193,15 @@ export default function App() {
       </main>
 
       {/* Quiet Footer */}
-      <footer className="border-t border-slate-200 bg-white py-6 mt-12 text-xs text-slate-500">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <div className="flex items-center gap-2">
+      <footer className="border-t border-slate-200 bg-white py-5 sm:py-6 mt-12 text-xs text-slate-500">
+        <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-3 text-center sm:text-left">
+          <div className="flex items-center gap-2 flex-wrap justify-center sm:justify-start">
             <span className="font-semibold text-slate-700">QuizMaster Assessment & Diagnostics</span>
-            <span aria-hidden="true">·</span>
+            <span aria-hidden="true" className="hidden sm:inline">·</span>
             <span>Item Response Analysis & Time Tracking</span>
           </div>
 
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-4 justify-center">
             <button
               onClick={() => setIsResetModalOpen(true)}
               className="text-slate-500 hover:text-slate-900 underline transition-colors"

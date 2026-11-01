@@ -19,16 +19,16 @@ export const SubmissionDetailModal: React.FC<SubmissionDetailModalProps> = ({
   const questionMap = new Map(questions.map(q => [q.id, q]));
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-xs">
-      <div className="bg-white rounded-xl shadow-xl border border-slate-200 max-w-3xl w-full max-h-[90vh] flex flex-col overflow-hidden">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-2.5 sm:p-4 bg-slate-900/50 backdrop-blur-xs">
+      <div className="bg-white rounded-xl shadow-xl border border-slate-200 max-w-3xl w-full max-h-[92vh] flex flex-col overflow-hidden">
         {/* Modal Header */}
-        <div className="px-6 py-4 border-b border-slate-100 flex items-start justify-between">
-          <div>
-            <div className="flex items-center gap-2">
-              <h2 className="text-lg font-bold text-slate-900">
+        <div className="px-4 sm:px-6 py-3.5 sm:py-4 border-b border-slate-100 flex items-start justify-between gap-3">
+          <div className="min-w-0">
+            <div className="flex items-center gap-2 flex-wrap">
+              <h2 className="text-base sm:text-lg font-bold text-slate-900 truncate">
                 {submission.studentName}
               </h2>
-              <span className={`text-xs font-semibold px-2 py-0.5 rounded ${
+              <span className={`text-xs font-semibold px-2 py-0.5 rounded shrink-0 ${
                 submission.passed
                   ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
                   : 'bg-rose-50 text-rose-700 border border-rose-200'
@@ -36,33 +36,33 @@ export const SubmissionDetailModal: React.FC<SubmissionDetailModalProps> = ({
                 {submission.passed ? 'PASSED' : 'NOT PASSED'}
               </span>
             </div>
-            <div className="flex items-center gap-2 text-xs text-slate-500 mt-1">
+            <div className="flex items-center gap-1.5 sm:gap-2 text-xs text-slate-500 mt-1 flex-wrap">
               <span className="font-mono font-semibold text-slate-800">Reg No: {submission.studentRegNo || submission.studentEmailOrId}</span>
               <span aria-hidden="true">·</span>
-              <span>Quiz: {submission.quizTitle}</span>
+              <span className="truncate">Quiz: {submission.quizTitle}</span>
               <span aria-hidden="true">·</span>
-              <span>{new Date(submission.submittedAt).toLocaleString()}</span>
+              <span>{new Date(submission.submittedAt).toLocaleDateString()}</span>
             </div>
           </div>
           <button
             onClick={onClose}
-            className="text-slate-400 hover:text-slate-700 p-1 rounded-md transition-colors"
+            className="text-slate-400 hover:text-slate-700 p-1 rounded-md transition-colors shrink-0"
           >
             <X className="w-5 h-5" />
           </button>
         </div>
 
         {/* Modal Quick Metrics */}
-        <div className="grid grid-cols-4 gap-2 p-4 bg-slate-50 border-b border-slate-200 text-center">
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 p-3.5 sm:p-4 bg-slate-50 border-b border-slate-200 text-center">
           <div>
             <p className="text-xs text-slate-500">Score</p>
-            <p className="text-lg font-bold text-slate-900 tabular-nums">
+            <p className="text-base sm:text-lg font-bold text-slate-900 tabular-nums">
               {submission.scorePercent}% ({submission.correctCount}/{submission.totalQuestions})
             </p>
           </div>
           <div>
             <p className="text-xs text-slate-500">Correct vs Wrong</p>
-            <p className="text-sm font-semibold text-slate-800 tabular-nums mt-0.5">
+            <p className="text-xs sm:text-sm font-semibold text-slate-800 tabular-nums mt-0.5">
               <span className="text-emerald-600">{submission.correctCount} Right</span> / <span className="text-rose-600">{submission.incorrectCount} Wrong</span>
             </p>
           </div>

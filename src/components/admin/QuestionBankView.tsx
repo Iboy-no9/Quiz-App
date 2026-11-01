@@ -130,7 +130,7 @@ export const QuestionBankView: React.FC<QuestionBankViewProps> = ({
   };
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
+    <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-5 sm:py-8 space-y-5 sm:space-y-6">
       {/* Top Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-4 border-b border-slate-200">
         <div>
@@ -140,25 +140,25 @@ export const QuestionBankView: React.FC<QuestionBankViewProps> = ({
           </p>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 w-full md:w-auto">
           <button
             onClick={onNavigateToBulkImporter}
-            className="px-3.5 py-1.5 text-xs font-semibold text-slate-700 bg-white border border-slate-300 hover:bg-slate-50 rounded-lg transition-colors whitespace-nowrap"
+            className="px-3.5 py-2 sm:py-1.5 text-xs font-semibold text-slate-700 bg-white border border-slate-300 hover:bg-slate-50 rounded-lg transition-colors whitespace-nowrap text-center min-h-[38px] sm:min-h-0"
           >
             Bulk Import (CSV/Text)
           </button>
           <button
             onClick={openAddModal}
-            className="inline-flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-semibold text-white bg-slate-900 hover:bg-slate-800 rounded-lg transition-colors whitespace-nowrap"
+            className="inline-flex items-center justify-center gap-1.5 px-3.5 py-2 sm:py-1.5 text-xs font-semibold text-white bg-slate-900 hover:bg-slate-800 rounded-lg transition-colors whitespace-nowrap min-h-[38px] sm:min-h-0"
           >
-            <Plus className="w-4 h-4" />
+            <Plus className="w-4 h-4 shrink-0" />
             <span>Create Single Question</span>
           </button>
         </div>
       </div>
 
       {/* Filters Bar */}
-      <div className="flex flex-col sm:flex-row items-center gap-3">
+      <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5 sm:gap-3">
         <div className="relative flex-1 w-full">
           <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
           <input
@@ -170,13 +170,13 @@ export const QuestionBankView: React.FC<QuestionBankViewProps> = ({
           />
         </div>
 
-        <div className="flex items-center gap-2 w-full sm:w-auto">
+        <div className="grid grid-cols-2 sm:flex sm:items-center gap-2 w-full sm:w-auto">
           <label htmlFor="filter-category" className="sr-only">Filter by Category</label>
           <select
             id="filter-category"
             value={selectedCategory}
             onChange={e => setSelectedCategory(e.target.value)}
-            className="text-xs px-3 py-2 bg-white border border-slate-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-slate-900 text-slate-700"
+            className="w-full sm:w-auto text-xs px-2.5 sm:px-3 py-2 bg-white border border-slate-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-slate-900 text-slate-700"
           >
             <option value="all">All Categories</option>
             {categories.map(c => (
@@ -191,7 +191,7 @@ export const QuestionBankView: React.FC<QuestionBankViewProps> = ({
             id="filter-difficulty"
             value={selectedDifficulty}
             onChange={e => setSelectedDifficulty(e.target.value)}
-            className="text-xs px-3 py-2 bg-white border border-slate-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-slate-900 text-slate-700"
+            className="w-full sm:w-auto text-xs px-2.5 sm:px-3 py-2 bg-white border border-slate-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-slate-900 text-slate-700"
           >
             <option value="all">All Difficulties</option>
             <option value="easy">Easy</option>

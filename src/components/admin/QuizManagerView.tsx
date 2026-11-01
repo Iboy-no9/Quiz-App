@@ -151,7 +151,7 @@ export const QuizManagerView: React.FC<QuizManagerViewProps> = ({
   );
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
+    <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-5 sm:py-8 space-y-5 sm:space-y-6">
       {/* Top Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-4 border-b border-slate-200">
         <div>
@@ -161,7 +161,7 @@ export const QuizManagerView: React.FC<QuizManagerViewProps> = ({
           </p>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center flex-wrap gap-2 w-full md:w-auto">
           <button
             onClick={() => {
               // Ensure an all-questions quiz exists and launch it
@@ -172,46 +172,46 @@ export const QuizManagerView: React.FC<QuizManagerViewProps> = ({
                 onLaunchStudentQuiz(quizzes[0].id);
               }
             }}
-            className="px-3.5 py-1.5 text-xs font-bold text-slate-900 bg-white border border-slate-300 hover:bg-slate-50 rounded-lg transition-colors whitespace-nowrap shadow-xs flex items-center gap-1.5"
+            className="px-3 py-2 sm:py-1.5 text-xs font-bold text-slate-900 bg-white border border-slate-300 hover:bg-slate-50 rounded-lg transition-colors whitespace-nowrap shadow-xs flex items-center justify-center gap-1.5 min-h-[36px]"
           >
-            <Play className="w-3.5 h-3.5 text-slate-800 fill-current" />
-            <span>Test Run All Questions ({questions.length})</span>
+            <Play className="w-3.5 h-3.5 text-slate-800 fill-current shrink-0" />
+            <span>Test Run All ({questions.length})</span>
           </button>
           <button
             onClick={onNavigateToBulkImporter}
-            className="px-3.5 py-1.5 text-xs font-semibold text-slate-700 bg-white border border-slate-300 hover:bg-slate-50 rounded-lg transition-colors whitespace-nowrap"
+            className="px-3 py-2 sm:py-1.5 text-xs font-semibold text-slate-700 bg-white border border-slate-300 hover:bg-slate-50 rounded-lg transition-colors whitespace-nowrap text-center min-h-[36px]"
           >
             Bulk Import Questions
           </button>
           <button
             onClick={openCreateModal}
-            className="inline-flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-semibold text-white bg-slate-900 hover:bg-slate-800 rounded-lg transition-colors whitespace-nowrap"
+            className="inline-flex items-center justify-center gap-1.5 px-3.5 py-2 sm:py-1.5 text-xs font-semibold text-white bg-slate-900 hover:bg-slate-800 rounded-lg transition-colors whitespace-nowrap min-h-[36px]"
           >
-            <Plus className="w-4 h-4" />
+            <Plus className="w-4 h-4 shrink-0" />
             <span>Create New Quiz</span>
           </button>
         </div>
       </div>
 
       {/* Featured All-Questions Banner */}
-      <div className="p-5 rounded-xl border border-slate-900 bg-slate-900 text-white flex flex-col md:flex-row md:items-center justify-between gap-4 shadow-sm">
+      <div className="p-4 sm:p-5 rounded-xl border border-slate-900 bg-slate-900 text-white flex flex-col lg:flex-row lg:items-center justify-between gap-4 shadow-sm">
         <div>
-          <div className="flex items-center gap-2 mb-1">
+          <div className="flex items-center gap-2 mb-1 flex-wrap">
             <span className="text-xs font-mono font-bold text-emerald-400 uppercase tracking-wider">
               Comprehensive Assessment
             </span>
             <span aria-hidden="true" className="text-slate-500">·</span>
             <span className="text-xs text-slate-300">All Question Bank Items</span>
           </div>
-          <h2 className="text-base font-bold text-white">
+          <h2 className="text-base sm:text-lg font-bold text-white">
             Full Paper Test Runner (All {questions.length} Questions)
           </h2>
-          <p className="text-xs text-slate-300 mt-0.5">
+          <p className="text-xs text-slate-300 mt-0.5 leading-relaxed">
             Students can enter their Student Name and Registration Number (Reg No) and complete all examination questions on a single page.
           </p>
         </div>
 
-        <div className="flex items-center gap-2 shrink-0">
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 shrink-0 w-full lg:w-auto">
           <button
             onClick={() => {
               const allQuiz = quizzes.find(q => q.id === 'quiz-all-questions') || quizzes[0];
@@ -219,7 +219,7 @@ export const QuizManagerView: React.FC<QuizManagerViewProps> = ({
                 onShareQuiz(allQuiz);
               }
             }}
-            className="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-semibold text-emerald-300 hover:text-emerald-200 bg-slate-800 hover:bg-slate-700 border border-emerald-500/30 rounded-lg transition-colors"
+            className="inline-flex items-center justify-center gap-1.5 px-3.5 py-2 text-xs font-semibold text-emerald-300 hover:text-emerald-200 bg-slate-800 hover:bg-slate-700 border border-emerald-500/30 rounded-lg transition-colors min-h-[38px]"
           >
             <Share2 className="w-3.5 h-3.5" />
             <span>Share Link</span>
@@ -231,7 +231,7 @@ export const QuizManagerView: React.FC<QuizManagerViewProps> = ({
                 onSelectQuizForAnalytics(allQuiz.id);
               }
             }}
-            className="px-3.5 py-2 text-xs font-semibold text-slate-200 hover:text-white bg-slate-800 hover:bg-slate-700 rounded-lg transition-colors"
+            className="inline-flex items-center justify-center px-3.5 py-2 text-xs font-semibold text-slate-200 hover:text-white bg-slate-800 hover:bg-slate-700 rounded-lg transition-colors min-h-[38px]"
           >
             View All Results
           </button>
@@ -242,7 +242,7 @@ export const QuizManagerView: React.FC<QuizManagerViewProps> = ({
                 onLaunchStudentQuiz(allQuiz.id);
               }
             }}
-            className="inline-flex items-center gap-1.5 px-4 py-2 text-xs font-bold text-slate-900 bg-white hover:bg-slate-100 rounded-lg transition-colors shadow-xs"
+            className="inline-flex items-center justify-center gap-1.5 px-4 py-2 text-xs font-bold text-slate-900 bg-white hover:bg-slate-100 rounded-lg transition-colors shadow-xs min-h-[38px]"
           >
             <Play className="w-3.5 h-3.5 fill-current" />
             <span>Test Run All Questions</span>

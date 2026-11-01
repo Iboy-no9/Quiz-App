@@ -125,22 +125,22 @@ export const AnalyticsView: React.FC<AnalyticsViewProps> = ({
   }
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+    <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-5 sm:py-8 space-y-6 sm:space-y-8">
       {/* Top Toolbar: Quiz Selection & Action Buttons */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-6 border-b border-slate-200">
+      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 pb-6 border-b border-slate-200">
         <div>
           <div className="flex items-center gap-2 text-xs text-slate-500 mb-1">
             <span>Assessment Analytics</span>
             <span aria-hidden="true">·</span>
             <span>Diagnostic Breakdown</span>
           </div>
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-3 flex-wrap">
             <label htmlFor="quiz-select" className="sr-only">Select Quiz</label>
             <select
               id="quiz-select"
               value={selectedQuizId}
               onChange={e => onSelectQuizId(e.target.value)}
-              className="text-xl font-bold text-slate-900 bg-transparent border-0 border-b-2 border-slate-900 focus:ring-0 focus:border-slate-900 pr-8 py-0.5 cursor-pointer"
+              className="text-lg sm:text-xl font-bold text-slate-900 bg-transparent border-0 border-b-2 border-slate-900 focus:ring-0 focus:border-slate-900 pr-8 py-0.5 cursor-pointer max-w-full truncate"
             >
               {quizzes.map(q => (
                 <option key={q.id} value={q.id}>
@@ -149,7 +149,7 @@ export const AnalyticsView: React.FC<AnalyticsViewProps> = ({
               ))}
             </select>
             {currentQuiz && (
-              <span className="text-xs font-mono text-slate-600 bg-slate-100 px-2 py-0.5 rounded">
+              <span className="text-xs font-mono text-slate-600 bg-slate-100 px-2 py-0.5 rounded shrink-0">
                 Code: {currentQuiz.accessCode}
               </span>
             )}
@@ -157,38 +157,38 @@ export const AnalyticsView: React.FC<AnalyticsViewProps> = ({
         </div>
 
         {/* Action Controls */}
-        <div className="flex items-center flex-wrap gap-2.5">
+        <div className="flex items-center flex-wrap gap-2">
           <button
             onClick={handleSimulate}
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-slate-700 bg-white border border-slate-300 hover:bg-slate-50 rounded-lg transition-colors whitespace-nowrap"
+            className="inline-flex items-center gap-1.5 px-3 py-2 sm:py-1.5 text-xs font-semibold text-slate-700 bg-white border border-slate-300 hover:bg-slate-50 rounded-lg transition-colors whitespace-nowrap min-h-[36px]"
             title="Generate 8 realistic student test submissions with various scores and times"
           >
-            <RefreshCw className="w-3.5 h-3.5 text-slate-500" />
+            <RefreshCw className="w-3.5 h-3.5 text-slate-500 shrink-0" />
             <span>Simulate 8 Students</span>
           </button>
 
           <button
             onClick={handleExportResults}
             disabled={!analytics || analytics.totalSubmissions === 0}
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-slate-700 bg-white border border-slate-300 hover:bg-slate-50 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap"
+            className="inline-flex items-center gap-1.5 px-3 py-2 sm:py-1.5 text-xs font-semibold text-slate-700 bg-white border border-slate-300 hover:bg-slate-50 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap min-h-[36px]"
           >
-            <Download className="w-3.5 h-3.5 text-slate-500" />
+            <Download className="w-3.5 h-3.5 text-slate-500 shrink-0" />
             <span>Export CSV</span>
           </button>
 
           <button
             onClick={handleExportDiagnostics}
             disabled={!analytics || analytics.questionDiagnostics.length === 0}
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-slate-700 bg-white border border-slate-300 hover:bg-slate-50 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap"
+            className="inline-flex items-center gap-1.5 px-3 py-2 sm:py-1.5 text-xs font-semibold text-slate-700 bg-white border border-slate-300 hover:bg-slate-50 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap min-h-[36px]"
           >
-            <Download className="w-3.5 h-3.5 text-slate-500" />
+            <Download className="w-3.5 h-3.5 text-slate-500 shrink-0" />
             <span>Diagnostics CSV</span>
           </button>
 
           {analytics && analytics.totalSubmissions > 0 && (
             <button
               onClick={handleClearSubmissions}
-              className="px-2.5 py-1.5 text-xs font-medium text-slate-500 hover:text-rose-600 transition-colors whitespace-nowrap"
+              className="px-2.5 py-2 sm:py-1.5 text-xs font-medium text-slate-500 hover:text-rose-600 transition-colors whitespace-nowrap min-h-[36px]"
             >
               Clear Records
             </button>
@@ -196,10 +196,10 @@ export const AnalyticsView: React.FC<AnalyticsViewProps> = ({
         </div>
       </div>
 
-      {/* KPI Overview Cards Strip (60-30-10, Tabular Figures) */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+      {/* KPI Overview Cards Strip (Tabular Figures) */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
         {/* Total Submissions */}
-        <div className="p-5 rounded-xl border border-slate-200 bg-white">
+        <div className="p-4 sm:p-5 rounded-xl border border-slate-200 bg-white shadow-xs">
           <div className="flex items-center justify-between text-slate-500 mb-2">
             <span className="text-xs font-medium uppercase tracking-wider">Submissions</span>
             <Users className="w-4 h-4 text-slate-400" />
@@ -513,22 +513,22 @@ export const AnalyticsView: React.FC<AnalyticsViewProps> = ({
           </div>
 
           {/* Search & Filter */}
-          <div className="flex items-center gap-3">
-            <div className="relative">
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5 w-full lg:w-auto">
+            <div className="relative w-full sm:w-52">
               <Search className="w-3.5 h-3.5 text-slate-400 absolute left-2.5 top-1/2 -translate-y-1/2" />
               <input
                 type="text"
                 placeholder="Search student..."
                 value={searchStudent}
                 onChange={e => setSearchStudent(e.target.value)}
-                className="pl-8 pr-3 py-1.5 text-xs bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-slate-900 w-48"
+                className="w-full pl-8 pr-3 py-2 sm:py-1.5 text-xs bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-slate-900"
               />
             </div>
 
-            <div className="flex items-center p-1 bg-slate-100 rounded-lg text-xs">
+            <div className="flex items-center p-1 bg-slate-100 rounded-lg text-xs overflow-x-auto justify-between sm:justify-start">
               <button
                 onClick={() => setFilterResult('all')}
-                className={`px-2.5 py-1 rounded font-medium transition-colors ${
+                className={`flex-1 sm:flex-initial px-2.5 py-1 rounded font-medium transition-colors text-center ${
                   filterResult === 'all' ? 'bg-white text-slate-900 shadow-xs' : 'text-slate-600 hover:text-slate-900'
                 }`}
               >
@@ -536,7 +536,7 @@ export const AnalyticsView: React.FC<AnalyticsViewProps> = ({
               </button>
               <button
                 onClick={() => setFilterResult('passed')}
-                className={`px-2.5 py-1 rounded font-medium transition-colors ${
+                className={`flex-1 sm:flex-initial px-2.5 py-1 rounded font-medium transition-colors text-center ${
                   filterResult === 'passed' ? 'bg-white text-emerald-700 shadow-xs' : 'text-slate-600 hover:text-slate-900'
                 }`}
               >
@@ -544,7 +544,7 @@ export const AnalyticsView: React.FC<AnalyticsViewProps> = ({
               </button>
               <button
                 onClick={() => setFilterResult('failed')}
-                className={`px-2.5 py-1 rounded font-medium transition-colors ${
+                className={`flex-1 sm:flex-initial px-2.5 py-1 rounded font-medium transition-colors text-center ${
                   filterResult === 'failed' ? 'bg-white text-rose-700 shadow-xs' : 'text-slate-600 hover:text-slate-900'
                 }`}
               >

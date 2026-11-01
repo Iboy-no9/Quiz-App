@@ -2178,7 +2178,7 @@ export const INITIAL_QUIZZES: Quiz[] = [
       "q-1793419814188-36-x465",
       "q-1793419814188-37-29f0"
     ],
-    "timeLimitMinutes": 76,
+    "timeLimitMinutes": 45,
     "passingScorePercent": 70,
     "shuffleQuestions": false,
     "shuffleOptions": false,
