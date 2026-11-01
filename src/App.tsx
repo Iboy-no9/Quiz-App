@@ -21,7 +21,7 @@ import {
 import { Question, Quiz, StudentSubmission } from './types/quiz';
 
 export default function App() {
-  const [currentRole, setCurrentRole] = useState<'admin' | 'student'>('admin');
+  const [currentRole, setCurrentRole] = useState<'admin' | 'student'>('student');
   const [adminTab, setAdminTab] = useState<'analytics' | 'importer' | 'questions' | 'quizzes'>('analytics');
   const [isStudentOnlyMode, setIsStudentOnlyMode] = useState(false);
   
@@ -38,15 +38,18 @@ export default function App() {
   const [isShareModalOpen, setIsShareModalOpen] = useState(false);
   const [quizToShare, setQuizToShare] = useState<Quiz | null>(null);
 
-  // Check query parameters on load for direct student distribution (?mode=student&code=XYZ)
+  // Check query parameters on load for direct student distribution (?mode=student&code=XYZ) or admin override (?mode=admin)
   useEffect(() => {
     if (typeof window !== 'undefined') {
       const params = new URLSearchParams(window.location.search);
-      const modeParam = params.get('mode');
+      const modeParam = params.get('mode') || params.get('role');
       const codeParam = params.get('code') || params.get('quiz');
 
-      if (modeParam === 'student' || Boolean(codeParam)) {
-        setIsStudentOnlyMode(true);
+      if (modeParam === 'admin') {
+        setCurrentRole('admin');
+      } else if (modeParam === 'student' || Boolean(codeParam)) {
+        // Explicit student distribution link locked to student mode
+        setIsStudentOnlyMode(Boolean(codeParam));
         setCurrentRole('student');
         if (codeParam) {
           const currentQuizzes = getQuizzes();
